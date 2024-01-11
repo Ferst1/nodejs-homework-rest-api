@@ -64,6 +64,26 @@ const updateStatusContact = async (req, res) => {
   res.json(result);
 };
 
+const updateContactFavorite = async (req, res, next) => {
+  try {
+    if (!Object.keys(req.body).length) {
+      throw HttpError(400, "missing field favorite");
+    }
+    const { error } = schemas.updateFavoriteSchema.validate(req.body);
+    if (error) {
+      throw HttpError(400, error.message);
+    }
+    const { contactId } = req.params;
+    const result = await Contact.updateStatusContact(contactId, req.body);
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   listContacts: ctrlWrapper(listContacts),
   getContactById: ctrlWrapper(getContactById),
@@ -71,4 +91,5 @@ module.exports = {
   addContact: ctrlWrapper(addContact),
   updateContact: ctrlWrapper(updateContact),
   updateStatusContact: ctrlWrapper(updateStatusContact),
+  updateContactFavorite: ctrlWrapper(updateContactFavorite),
 };
