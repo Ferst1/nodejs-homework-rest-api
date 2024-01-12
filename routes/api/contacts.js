@@ -1,5 +1,4 @@
 const express = require("express");
-
 const ctrl = require("../../controllers/contacts");
 const { isValidId } = require("../../middlewares");
 
