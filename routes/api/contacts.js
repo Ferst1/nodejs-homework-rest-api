@@ -8,7 +8,7 @@ router.get("/", ctrl.listContacts);
 
 router.get("/:contactId", isValidId, ctrl.getContactById);
 
-router.post("/", ctrl.addContact);
+router.post("/", isValidId, ctrl.addContact);
 
 router.put("/:contactId", isValidId, ctrl.updateContact);
 
