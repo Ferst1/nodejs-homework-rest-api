@@ -19,7 +19,7 @@ router.post("/", validateBody(schemas.addSchema), ctrl.addContact);
 
 router.put(
   "/:id",
-  isValidId,
+  isEmptyBody,
   validateBody(schemas.addSchema),
   ctrl.updateContact
 );
@@ -30,9 +30,8 @@ router.patch(
   "/:id/favorite",
   isEmptyBodyFavorite,
   isValidId,
-  validateBody(schemas.updateFavoriteSchema), // Используйте validateBody здесь
+  validateBody(schemas.updateFavoriteSchema),
   ctrl.updateStatusContact
 );
 
 module.exports = router;
-
