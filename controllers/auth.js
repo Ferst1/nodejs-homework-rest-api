@@ -2,12 +2,10 @@ const {User} = require('../models/user')
 const { HttpError, ctrlWrapper } = require("../helpers");
 
 const register = async (req, res) => {
-    const {email} = req.body;
-
-    
+    const {email} = req.body;   
     const user = await User.findOne({email});
     if(user){
-        throw HttpError(409, 'Email alredy in use');
+        throw HttpError(409, 'Email in use');
     }
 
 
