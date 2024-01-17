@@ -57,6 +57,7 @@ const login = async (req, res) => {
 
         const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
        // we save token when login is successful
+       
         res.json({
             token});
         }
