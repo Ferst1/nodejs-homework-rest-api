@@ -15,12 +15,6 @@ const authenticate = async (req, res, next) => {
          next(new HttpError(401,"Invalid token"));
     }
 
-
-    req.user ={
-        id:decode.id,
-        name:decode.name,
-    }
-
     try {
         const { id } = jwt.verify(token,SECRET_KEY);
         const user = await User.findById(id);

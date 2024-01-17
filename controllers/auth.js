@@ -33,14 +33,14 @@ const register = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({...req.body,password:hashPassword});
-    res.status(201).json({
-        email: newUser.email,
-        name: newUser.name,
+    res.status(201).json({ 
+        email: newUser.email, 
+        subscription: newUser.subscription
     })
 }
-//----------------------------------Login
+//----------------------------------Login--signin-------------------------
 
-const login = async (req, res) => {
+    const login = async (req, res) => {
     const {email,password} = req.body;
     const user = await User.findOne({email});
 
@@ -54,16 +54,29 @@ const login = async (req, res) => {
 
 
     const payload= {id:user_id,}
-
-        const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
-       // we save token when login is successful
-       
-        res.json({
-            token});
-        }
-
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
     
+    await User.findByIdAndUpdate(user._id, { token }); // we save token when login is successful
+  res
+    .status(200)
+    .json({ email: user.email, subscription: user.subscription, token });
+};
+     
+
+//-----------------------------------Logout--------------------------------
+
+    const logout= async(req, res) => {
+
+        const { _id } = req.user;
+        await User.findByIdAndUpdate(_id, { token: "" });
+        res.json({ message: "No content" }); // when I add .status(204) - postman respond is empty
+      };
+    
+
+
+
 module.exports = {
     register: ctrlWrapper(register),
     login: ctrlWrapper(login),
+    logout: ctrlWrapper(logout),
 }
