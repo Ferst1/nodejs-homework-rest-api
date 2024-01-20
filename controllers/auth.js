@@ -7,6 +7,9 @@ const {HttpError, ctrlWrapper} = require("../helpers");
 
 const {SECRET_KEY} = process.env;
 
+
+//-------------REGISTER-----------
+
 const register = async (req, res) => {
     
 const {email,password} = req.body;
@@ -51,14 +54,46 @@ res.status(201).json({
 
       const token = jwt.sign(payload, SECRET_KEY, {expiresIn: "23h"});
       
+
+    await User.findByIdAndUpdate(user._id, {token});
+
     
-    res.json({
+    res.status(200).json({
         token,
+        user: {
+            email: user.email,
+            subscription: user.subscription,
+        }
     });
 
  }
 
+
+ //-----------current user
+
+ const current = async (req, res) => {
+	const { email, subscription } = req.user;
+
+	res.status(200).json({
+		email,
+		subscription,
+	});
+};
+
+//----------logaut----------------
+
+const logout = async (req, res) => {
+	const { _id } = req.user;
+	await User.findByIdAndUpdate(_id, { token: "" });
+
+	res.status(204).json({
+		message: "No Content",
+	});
+};
+
 module.exports={
     register: ctrlWrapper(register),
     login: ctrlWrapper(login),
+    current: ctrlWrapper(current),
+    logout: ctrlWrapper(logout),
 }
