@@ -5,16 +5,13 @@ const Joi = require("joi");
 const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 
-const userSchema = new Schema(
+
+const userSchema = new Schema(    
     {
-        name: {
-          type: String,
-          required:true,
-        },
         password: {
           type: String,
           minlength: 6,
-          required: [true, 'Password is required'],
+          required: true,
         },
         email: {
           type: String,
@@ -30,35 +27,38 @@ const userSchema = new Schema(
         token: {
           type: String,
           default: null,
+        },
+        owner: {
+          type: Schema.Types.ObjectId,
+          ref: 'user',
           required: true,
         },
-      },{versionKey: false, timestamps: true}
+      },
+    {versionKey: false, timestamps: true}
 );
-
 userSchema.post("save", handleMongooseError);
-// userSchema.pre("findOneAndUpdate", runValidatorsAtUpdate); // mongoose pre hook
-// userSchema.post("findOneAndUpdate", handleSaveError);
 
-
-
-const registerSchema = Joi.object({
-	  email: Joi.string().pattern(emailRegexp).required(),
-    password: Joi.string().min(6).required(),
+//Створюємо 2 joi схеми на регестрацію та логін
+const registerSchema = Joi.object({    
+    name: Joi.string(),
+    email: Joi.string().pattern(emailRegexp).required(),
+    password: Joi.string().min(6),
 })
 
-const loginSchema = Joi.object({  
-	  email: Joi.string().pattern(emailRegexp).required(),
-    password: Joi.string().min(6).required(),
+
+const loginSchema = Joi.object({    
+    email: Joi.string().pattern(emailRegexp).required(),
+    password: Joi.string().min(6),
 })
 
-const schemas = {
-  registerSchema,
-  loginSchema,
+const schemas ={
+    registerSchema,
+    loginSchema,
 }
 
 const User = model("user", userSchema);
 
 module.exports = {
-  User,
-  schemas,
-}
+    User,
+    schemas,
+};

@@ -12,7 +12,7 @@ const {
 
 const { schemas } = require("../../models/contact");
 
-router.get("/", ctrl.listContacts);
+router.get("/",ctrl.listContacts);
 
 router.get("/:id", isValidId, ctrl.getContactById);
 
@@ -20,6 +20,7 @@ router.post("/",validateBody(schemas.addSchema), ctrl.addContact);
 
 router.put(
   isEmptyBody,
+  isValidId,
   validateBody(schemas.putSchema),
   ctrl.updateContact
 );
