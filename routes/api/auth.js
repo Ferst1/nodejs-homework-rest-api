@@ -2,24 +2,20 @@ const express = require("express");
 
 const ctrl = require("../../controllers/auth");
 
-const {validateBody,authenticate} = require("../../middlewares");
+const {isEmptyBody, validateBody,authenticate} = require("../../middlewares");
 
 const {schemas} = require("../../models/user");
-
-
 
 const router = express.Router();
 
 
 
-//Створюемо маршрут
-
 
 //----SIGNUP----
- router.post("/register",validateBody(schemas.registerSchema), ctrl.register);
+ router.post("/register",isEmptyBody,validateBody(schemas.registerSchema), ctrl.register);
 
  //--signin---
- router.post("/login",authenticate, validateBody(schemas.loginSchema), ctrl.login);
+ router.post("/login",isEmptyBody,authenticate, validateBody(schemas.loginSchema), ctrl.login);
 
 
  //---logaut--
