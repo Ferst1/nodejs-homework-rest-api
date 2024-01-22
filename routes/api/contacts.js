@@ -3,6 +3,7 @@ const router = express.Router();
 const ctrl = require("../../controllers/contacts");
 
 const {
+  authenticate,
   validateBody,
   isEmptyBody,
   isValidId,
@@ -11,6 +12,8 @@ const {
 } = require("../../middlewares");
 
 const { schemas } = require("../../models/contact");
+
+router.use(authenticate);
 
 router.get("/",ctrl.listContacts);
 

@@ -15,7 +15,7 @@ const router = express.Router();
  router.post("/register",isEmptyBody,validateBody(schemas.registerSchema), ctrl.register);
 
  //--signin---
- router.post("/login",isEmptyBody,authenticate, validateBody(schemas.loginSchema), ctrl.login);
+ router.post("/login",isEmptyBody,validateBody(schemas.loginSchema), ctrl.login);
 
 
  //---logaut--
