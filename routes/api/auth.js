@@ -27,4 +27,8 @@ router.post("/logout", authenticate, ctrl.logout);
 
 router.get("/current", authenticate, ctrl.current);
 
+//---router for subscription
+
+router.patch("/", authenticate,validateBody(schemas.subscriptionSchema), ctrl.patchSubscription);
+
 module.exports = router;
