@@ -2,9 +2,16 @@
 const { Contact, schemas } = require("../models/contact");
 const { HttpError, ctrlWrapper } = require("../helpers");
 
-const listContacts = async (_req, res) => {
-  const result = await Contact.find();
+const listContacts = async (req, res) => {
+  const { _id: owner } = req.user;
+  const result = await Contact.find({ owner });
   res.json(result);
+};
+
+const addContact = async (req, res) => {
+  const { _id: owner } = req.user;
+  const result = await Contact.create({ ...req.body, owner });
+  res.status(201).json(result);
 };
 
 const getContactById = async (req, res) => {
@@ -27,12 +34,6 @@ const removeContact = async (req, res) => {
   });
 };
 
-const addContact = async (req, res) => {
-  const result = await Contact.create(req.body);
-  res.status(201).json(result);
-};
-
-
 const updateContact = async (req, res) => {
   const { id } = req.params;
   const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
@@ -49,7 +50,11 @@ const updateStatusContact = async (req, res) => {
   }
   const { id } = req.params;
   const { favorite } = req.body;
-  const result = await Contact.findByIdAndUpdate(id, {favorite}, { new: true });
+  const result = await Contact.findByIdAndUpdate(
+    id,
+    { favorite },
+    { new: true }
+  );
   if (!result) {
     throw HttpError(404, "Not found");
   }
