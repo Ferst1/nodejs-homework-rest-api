@@ -31,4 +31,13 @@ router.get("/current", authenticate, ctrl.current);
 
 router.patch("/", authenticate,validateBody(schemas.subscriptionSchema), ctrl.patchSubscription);
 
+
+//--------router for avatar
+
+// router.patch(
+// 	"/avatars",
+// 	authenticate,
+// 	upload.single("avatar"),
+// 	ctrlWrapper(updateAvatar)
+// );
 module.exports = router;
