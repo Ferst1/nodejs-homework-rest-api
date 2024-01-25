@@ -13,6 +13,8 @@ const router = express.Router();
 
 //----SIGNUP----
  router.post("/register",isEmptyBody,validateBody(schemas.registerSchema), ctrl.register);
+//.single - have to be after contactAddValidate!, in the field avatar will be only one file. if need to send 5 files - .array("avatar", 5)
+
 
  //--signin---
  router.post("/login",validateBody(schemas.loginSchema), ctrl.login);
@@ -35,9 +37,10 @@ router.patch("/", authenticate,validateBody(schemas.subscriptionSchema), ctrl.pa
 //--------router for avatar
 
 // router.patch(
-// 	"/avatars",
+// 	"/users/avatars",
 // 	authenticate,
-// 	upload.single("avatar"),
 // 	ctrlWrapper(updateAvatar)
 // );
+
+
 module.exports = router;
