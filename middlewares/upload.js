@@ -3,7 +3,7 @@ const path = require('path');
 // const { nanoid } = require("nanoid");
 
 
- const tempDir = path.join(__dirname,"temp");
+ const tempDir = path.join(__dirname, "../", "temp");
 
  const multerConfig = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -24,4 +24,4 @@ const path = require('path');
         storage: multerConfig   
     })
 
-    module.exports = upload ;
+    module.exports = upload;

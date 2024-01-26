@@ -30,7 +30,7 @@ if(user){
 const hashPassword = await bcrypt.hash(password, 10);
 const avatarURL = gravatar.url(email);
 
-const newUser = await User.create({...req.body,password:hashPassword, avatarURL});
+const newUser = await User.create({...req.body,password:hashPassword,avatarURL});
 
 if (user.avatar === null) {
     return res.status(404).send({ message: "Avatar not found" });
@@ -41,6 +41,7 @@ res.status(201).json({
     user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: newUser.avatarURL,
     },
 
 });
