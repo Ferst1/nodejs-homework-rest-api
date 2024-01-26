@@ -3,27 +3,25 @@ const path = require('path');
 // const { nanoid } = require("nanoid");
 
 
- const tempDir = path.join(__dirname,"../", "temp");
+ const tempDir = path.join(__dirname,"temp");
 
  const multerConfig = multer.diskStorage({
-	destination:tempDir,
+    destination: (req, file, cb) => {
+
+        cb(null, tempDir);
+    },
     filename: (req, file, cb) => {
 
         cb(null, file.originalname);
-    }
-   
-  
-    });
+    },
     
-const limits = {
-
-    fileSize: 5*1024 * 1024,
-};
+     limits:  {
+            fileSize:2048
+        }
+    });
 
     const upload = multer({
-        storage: multerConfig,
-        limits,
-        
+        storage: multerConfig   
     })
 
     module.exports = upload ;

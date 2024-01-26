@@ -9,7 +9,7 @@ const Jimp = require("jimp");
 const {User} = require("../models/user");
 const avatarsDir = path.resolve("public", "avatars");
 const {HttpError, ctrlWrapper} = require("../helpers");
- const { required } = require("joi");
+ 
 
 const {SECRET_KEY} = process.env;
 
@@ -43,9 +43,9 @@ res.status(201).json({
         subscription: newUser.subscription,
     },
 
-})
+});
 
-}
+};
 //----------------LOGIN------------
 
  const login = async (req, res) => {
