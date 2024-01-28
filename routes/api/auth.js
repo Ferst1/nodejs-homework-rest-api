@@ -32,7 +32,7 @@ router.get("/current", authenticate, ctrl.current);
 
 //---router for subscription
 
-router.patch("/", authenticate,validateBody(schemas.subscriptionSchema), ctrl.patchSubscription);
+router.patch("/",upload.single("avatar"), authenticate,validateBody(schemas.subscriptionSchema), ctrl.patchSubscription);
 
 
 //--------router for avatar

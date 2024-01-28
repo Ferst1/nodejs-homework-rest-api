@@ -32,7 +32,7 @@ const avatarURL = gravatar.url(email);
 
 const newUser = await User.create({...req.body,password:hashPassword,avatarURL});
 
-if (user.avatar === null) {
+if (newUser.avatar === null) {
     return res.status(404).send({ message: "Avatar not found" });
 }
 
@@ -121,6 +121,13 @@ const patchSubscription = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
 	const { _id } = req.user;
+
+
+     // Перевірка, чи був переданий файл
+     if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+
 
 	const { path: tempUpload, originalname } = req.file;
 	const filename = `${_id}_${originalname}`;
