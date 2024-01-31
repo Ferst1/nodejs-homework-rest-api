@@ -14,9 +14,12 @@ const router = express.Router();
 
 //----SIGNUP----
  router.post("/register", isEmptyBody,validateBody(schemas.registerSchema), ctrl.register);
+ 
 //.single - have to be after contactAddValidate!, in the field avatar will be only one file. if need to send 5 files - .array("avatar", 5)
 
-router.get("/verify/:verificationToken", ctrl.verifyEmail);
+router.get("/verify/:verificationCode", ctrl.verifyEmail);
+
+
 
 router.post("/verify", validateBody(schemas.emailSchema),ctrl.resendVerifyEmail);
  //--signin---

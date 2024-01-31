@@ -27,32 +27,30 @@ const register = async (req, res) => {
 
   const hashPassword = await bcrypt.hash(password, 10);
   const avatarURL = gravatar.url(email);
-  const verificationCode = nanoid();
-  console.log(verificationCode);
+  const verificationToken = nanoid();
+  console.log(verificationToken);
 
   const newUser = await User.create({
     ...req.body,
     password: hashPassword,
     avatarURL,
-    verificationToken: verificationCode,
+    verificationToken,
   });
 
   const verifyEmail = {
       to : email,
       subject:"Verify email",
-      html: `<a target="_blank" href="http:${BASE_URL}/api/users/verify/${verificationCode}">Click to verify email</a>`
+      html: `<a target="_blank" href="http:${BASE_URL}/api/users/verify/${verificationToken}">Click to verify email</a>`,
+      
   };
   await sendEmail(verifyEmail);
 
-//   if (newUser.avatar === null) {
-//       return res.status(404).send({ message: "Avatar not found" });
-//   }
+  // await newUser.save();
 
   res.status(201).json({
     user: {
       email: newUser.email,
-      subscription: newUser.subscription,
-      
+      subscription: newUser.subscription, 
       
     },
   });
@@ -61,47 +59,47 @@ const register = async (req, res) => {
 //////////-----------------
 
 const verifyEmail = async (req, res) => {
-  const { verificationCode } = req.params;
-  const user = await User.findOne({ verificationCode });
+  const { verificationToken } = req.params;
+  const user = await User.findOne({ verificationToken });
   if (!user) {
     throw HttpError(404, "User not found");
   }
   await User.findByIdAndUpdate(user._id, {
     verify: true,
-    verificationCode: null,
+    verificationToken: null,
   });
 
   res.json({
     message: "Verification successful",
   });
-};
+}
+
+
+
 
 const resendVerifyEmail = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
     
     if (!user) {
-      return res.status(400).json({ message: "User not found" });
+      return res.status(400).json({ message: "Missing required field email" });
     }
   
     if (user.verify) {
       return res.status(400).json({ message: "Verification has already been passed" });
     }
   
-    // Создаем новый код верификации
-    const verificationCode = nanoid();
+  
   
     const verifyEmail = {
       to: email,
       subject: "Verify email",
       html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationCode}">Click verify email</a>`,
+      
     };
-  
-    // Обновляем код верификации в базе данных
-    await User.findByIdAndUpdate(user._id, { verificationToken: verificationCode });
-  
-    // Отправляем письмо
-    await sendEmail(verifyEmail);
+ // Отправляем письмо
+ await sendEmail(verifyEmail);
+ 
   
     res.json({ message: "Verification email sent" });
 };
@@ -110,9 +108,18 @@ const resendVerifyEmail = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    throw HttpError(401, "Email or password is wrong");
+  }
+
   const user = await User.findOne({ email });
   if (!user) {
     throw HttpError(401, "Email or password invalid");
+  }
+
+  if (!user.verify) {
+    throw HttpError(401, "Email not verified");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
