@@ -10,7 +10,7 @@ const { User } = require("../models/user");
 
 const { HttpError, ctrlWrapper, sendEmail } = require("../helpers");
 
-const { SECRET_KEY, BASE_URL } = process.env;
+const { SECRET_KEY, BASE_URL} = process.env;
 
 const avatarsDir = path.resolve("public", "avatars");
 
@@ -40,7 +40,7 @@ const register = async (req, res) => {
   const verifyEmail = {
       to : email,
       subject:"Verify email",
-      html: `<a target="_blank" href="http:${BASE_URL}/api/users/verify/${verificationToken}">Click to verify email</a>`,
+      html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click to verify email</a>`,
     
 
   };
@@ -53,6 +53,8 @@ const register = async (req, res) => {
     user: {
       email: newUser.email,
       subscription: newUser.subscription, 
+
+
       
     },
   });
