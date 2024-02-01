@@ -41,9 +41,11 @@ const register = async (req, res) => {
       to : email,
       subject:"Verify email",
       html: `<a target="_blank" href="http:${BASE_URL}/api/users/verify/${verificationToken}">Click to verify email</a>`,
-      
+    
+
   };
   await sendEmail(verifyEmail);
+
 
   // await newUser.save();
 
@@ -66,7 +68,7 @@ const verifyEmail = async (req, res) => {
   }
   await User.findByIdAndUpdate(user._id, {
     verify: true,
-    verificationToken: null,
+    verificationToken:"",
   });
 
   res.json({
