@@ -226,6 +226,16 @@ const avatarsDir = path.resolve("public", "avatars");
 
 // -------------REGISTER-----------
 
+// Функция для отправки письма для верификации
+const sendVerificationEmail = async (email, verificationToken) => {
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click to verify email</a>`,
+  };
+  await sendEmail(verifyEmail);
+};
+
 const register = async (req, res) => {
   const { email, password } = req.body;
 
@@ -247,12 +257,8 @@ const register = async (req, res) => {
     verificationToken,
   });
 
-  const verifyEmail = {
-    to: email,
-    subject: "Verify email",
-    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click to verify email</a>`,
-  };
-  await sendEmail(verifyEmail);
+  // Отправляем письмо для верификации
+  await sendVerificationEmail(email, verificationToken);
 
   // await newUser.save();
 
@@ -294,14 +300,11 @@ const resendVerifyEmail = async (req, res) => {
       .json({ message: "Verification has already been passed" });
   }
 
-  const verificationToken = nanoid(); // Added this line to generate a new verification token
-  const verifyEmail = {
-    to: email,
-    subject: "Verify email",
-    html: `<a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">Click to verify email</a>`,
-  };
-  // Отправляем письмо
-  await sendEmail(verifyEmail);
+  // Получаем токен пользователя из базы данных
+  const verificationToken = user.verificationToken;
+
+  // Отправляем письмо для верификации
+  await sendVerificationEmail(email, verificationToken);
 
   res.json({ message: "Verification email sent" });
 };
@@ -393,12 +396,22 @@ const updateAvatar = async (req, res) => {
 
   const resultUpload = path.join(avatarsDir, filename);
 
-  Jimp.read(tempUpload, async (err, image) => {
-    if (err) throw new HttpError(404, err);
-    image.resize(250, 250).write(resultUpload);
-    await fs.unlink(tempUpload); // Delete temporary upload after processing
-  });
+  try {
+    // Асинхронное чтение изображения
+    const image = await Jimp.read(tempUpload);
 
+    // Работа с изображением
+    image.resize(250, 250).write(resultUpload);
+
+    // Удаление временного файла
+    await fs.unlink(tempUpload);
+  } catch (error) {
+    // Обработка ошибок чтения изображения или удаления файла
+    console.error("Error processing image:", error);
+    throw new HttpError(500, "Internal Server Error");
+  }
+
+  // Обновление URL аватара в базе данных
   const avatarURL = path.join("avatars", filename);
   await User.findByIdAndUpdate(_id, { avatarURL });
 
