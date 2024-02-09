@@ -32,7 +32,7 @@ const register = async (req, res) => {
   // унікальний message
   const user = await User.findOne({ email });
   if (user) {
-    throw new HttpError(409, "Email already in use");
+    throw  HttpError(409, "Email already in use");
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
@@ -64,7 +64,7 @@ const verifyEmail = async (req, res) => {
   const { verificationToken } = req.params;
   const user = await User.findOne({ verificationToken });
   if (!user) {
-    throw new HttpError(404, "User not found");
+    throw HttpError(404, "User not found");
   }
   await User.findByIdAndUpdate(user._id, {
     verify: true,
@@ -105,21 +105,21 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new HttpError(401, "Email or password is wrong");
+    throw  HttpError(401, "Email or password is wrong");
   }
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new HttpError(401, "Email or password invalid");
+    throw  HttpError(401, "Email or password invalid");
   }
 
   if (!user.verify) {
-    throw new HttpError(401, "Email not verified");
+    throw  HttpError(401, "Email not verified");
   }
 
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
-    throw new HttpError(401, "Email or password invalid");
+    throw HttpError(401, "Email or password invalid");
   }
 
   const payload = {
@@ -166,7 +166,7 @@ const patchSubscription = async (req, res) => {
   const { _id } = req.user;
   const result = await User.findByIdAndUpdate(_id, req.body, { new: true });
   if (!result) {
-    throw new HttpError(404, "Not found");
+    throw  HttpError(404, "Not found");
   }
   res.status(200).json(result);
 };
@@ -198,7 +198,7 @@ const updateAvatar = async (req, res) => {
   } catch (error) {
     // Обработка ошибок чтения изображения или удаления файла
     console.error("Error processing image:", error);
-    throw new HttpError(500, "Internal Server Error");
+    throw HttpError(500, "Internal Server Error");
   }
 
   // Обновление URL аватара в базе данных
